@@ -5,6 +5,7 @@ import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
 from getlinkinfo import getlinkobject
+from topology import gettopology
 
 app = Flask(__name__) # create the application instance :)
 app.config.from_object(__name__) # load config from this file , sdnapp.py
@@ -105,3 +106,10 @@ def event():
     error=None
     entries = getlinkobject()
     return render_template('events.html', entries=entries)
+
+@app.route('/topology')
+def topology():
+    error=None
+    entries = gettopology()
+
+    return render_template('topology.html', entries=entries)

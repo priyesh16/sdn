@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SDN APP</title>
+        <link href="style.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div id="General" ><br />
+
+            <div id="control" valign="middle" >
+                <ul>
+                    <li><input type="checkbox" id="map" name="map" onclick="calc();"> show map</li>
+                    <li><input type="checkbox" name="id" value="on"> Show Node ID</li>
+                    <li><input type="checkbox" name="lsp" value="on"> Show tunnel</li>
+                </ul>
+
+            </div><br/>
+
+            <div id="wrapper">
+
+                <div class="box">  <!-- box Display my topology -->
+                    <img id="myImage" src="BlankMap.gif" width="560" height="300">
+                        </div>
+            </div><br />
+
+            <div id="button">
+                <button type="button" onclick="document.getElementById('myImage').src='usamap.gif'">submit</button>
+            </div> <br />
+
+
+            <script>
+                function calc()
+                {
+                    if (document.getElementById('map').checked)
+                    {
+                        document.getElementById('myImage').src = 'usamap.gif';
+                    } else {
+                        document.getElementById('myImage').src = 'BlankMap.gif';
+                    }
+                }
+            </script>
+
+            <hr/> <!--  Display Lower half -->
+
+
+
+          <div id="table">
+              <table border="1" cellpadding="5" cellspacing="5">
+                  <tr>
+                      <td>Name</td>
+
+                       <ul class=entries>
+
+                         {% for link in entries() %}
+                          <li>{{link}}</li>
+                       {% endfor %}
+
+                      </ul>
+
+                      <td>Status</td>
+                      <td>Type</td>
+                      <td>Node A</td>
+                      <td>Node Z</td>
+                      <td>IP A</td>
+                      <td>IP B</td>
+                      <td>TE Meteric A</td>
+                      <td>TE Meteric B</td>
+                      <td>BW AZ</td>
+                      <td>BW AZ</td>
+
+                  </tr>
+                  <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                  </tr>
+              </table>
+          </div>
+        </div>
+
+
+    </body>
+</html>
