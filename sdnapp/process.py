@@ -47,7 +47,7 @@ def getnodes():
             node['Type'] = 'PE'
         else:
             node['Type'] = 'Core'
-        #printdict(node)
+        printdict(node)
     return nodes
 
 def getlinks():
@@ -59,13 +59,14 @@ def getlinks():
     for link in links:
             link["endA_address"] = link["endA"]["ipv4Address"]["address"]
             link["endZ_address"] = link["endZ"]["ipv4Address"]["address"]
+            link["endZ_metric"] = str(link["endZ"]["TEmetric"])
 
-    '''
+
     for link in links:
         del link["endA"]
         del link["endZ"]
         printdict(link)
-    '''
+
     return links;
 
 def getevents():
@@ -122,33 +123,14 @@ def setlsp(LSPs, authHeader, lspname):
     '''
     return lsp;
 
-def processtopo():
-    topology = gettopology();
-    linkinfo = getlinkobject()
-    requiredkeys = ["name", "hostname","endA", "endZ"]
-    print "==================================="
 
-    removekeys(topology, requiredkeys)
-    print "==================================="
-
-    requiredkeys = ["name", "hostname"]
-    #removekeys(linkinfo, requiredkeys)
-    for item in topology:
-        print item, topology
-    print "==================================="
-    #for item in linkinfo:
-        #print item
-
-
-    #print links[0]
 
 if __name__ == "__main__":
     if (sys.argv[1] == "pri"):
         lsp , authHeader = getlsp();
         setlsp(lsp, authHeader, 'GROUP_FIVE_SF_NY_LSP3');
-
         setlsp();
     if (sys.argv[1] == "aziz"):
-        processtopo();
+        getnodes();
     if (sys.argv[1] == "veda"):
         processtopo();

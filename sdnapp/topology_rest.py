@@ -34,9 +34,4 @@ def gettopoinfo():
 
 
 if __name__ == "__main__":
-	if (sys.argv[1] == "pri"):
-		gettopology()
-	if (sys.argv[1] == "aziz"):
-		gettopology()
-	if (sys.argv[1] == "veda"):
-		gettopology()
+	gettopoinfo()
