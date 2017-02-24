@@ -63,15 +63,6 @@ def show_entries():
 
 ##added now
 
-@app.route('/')
-def events():
-    #linkObj = getlinkinfo.getlinkobject()
-    #print(linkObj)
-    entries = {'Name': 'Zara', 'Age': 7, 'Class': 'First'}
-    return render_template('events.html', entries=entries)
-
-
-
 @app.route('/add', methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
@@ -104,10 +95,12 @@ def logout():
     return redirect(url_for('show_entries'))
 
 @app.route('/events')
-def event():
-    error=None
-    entries = getlinkobject()
-    return render_template('events.html', entries=entries)
+def events():
+    eventslist = getlinkobject()
+    requiredkeys = ['linkIndex', 'name', 'bandwidth']
+    eventslist = removekeys(eventslist, requiredkeys)
+    print eventslist
+    return render_template('events.html', entries=eventslist)
 
 @app.route('/topology')
 def topology():
@@ -117,10 +110,6 @@ def topology():
     print topolist
     return render_template('topology.html', entries=topolist)
 
+
 if __name__ == "__main__":
-	if (sys.argv[1] == "pri"):
-		topology()
-	if (sys.argv[1] == "aziz"):
-		topology()
-	if (sys.argv[1] == "veda"):
-		topology()
+	globals()[sys.argv[1]]()

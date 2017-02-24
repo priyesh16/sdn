@@ -8,13 +8,17 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 from getlinkinfo import getlinkobject
 from topology import gettopology
 
-
 def removekeys(topolist, requiredkeys):
     total_routers = len(topolist)
     to_be_deleted = []
+
     for key in topolist[0]:
+        print key
         if key not in requiredkeys:
             to_be_deleted.append(key)
+
+    #print "delete" , to_be_deleted
+    #print "add" , requiredkeys
 
     #delete non required keys
     for i in range(total_routers):
@@ -24,9 +28,20 @@ def removekeys(topolist, requiredkeys):
     return topolist
 
 def processtopo():
-	topology = gettopology();
-	print topology
+    topology = gettopology();
+    linkinfo = getlinkobject()
+    requiredkeys = ["name"]
+    removekeys(topology, requiredkeys)
+    requiredkeys = ["name"]
+    removekeys(linkinfo, requiredkeys)
+    for item in topology:
+        print item
+    print "==================================="
+    for item in linkinfo:
+        print item
 
+
+    print links[0]
 
 if __name__ == "__main__":
     if (sys.argv[1] == "pri"):
