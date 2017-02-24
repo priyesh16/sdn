@@ -1,11 +1,13 @@
 # all the imports
 import os
+import sys
 import sqlite3
 #import getlinkinfo
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
 from getlinkinfo import getlinkobject
 from topology import gettopology
+from process import *
 
 app = Flask(__name__) # create the application instance :)
 app.config.from_object(__name__) # load config from this file , sdnapp.py
@@ -109,7 +111,16 @@ def event():
 
 @app.route('/topology')
 def topology():
-    error=None
-    entries = gettopology()
+    topolist = gettopology()
+    requiredkeys = ['nodeIndex', 'name', 'hostName']
+    topolist = removekeys(topolist, requiredkeys)
+    print topolist
+    return render_template('topology.html', entries=topolist)
 
-    return render_template('topology.html', entries=entries)
+if __name__ == "__main__":
+	if (sys.argv[1] == "pri"):
+		topology()
+	if (sys.argv[1] == "aziz"):
+		topology()
+	if (sys.argv[1] == "veda"):
+		topology()
