@@ -6,7 +6,13 @@
     </head>
     <body>
         <div id="General" ><br />
-
+          <a href ="#" onclick="load_home()"> HOME </a> </div>
+  <div id ="content"> </div>
+  <script>
+        function load_home(){
+              document.getElementById("content").innerHTML='<object type="type/html" data="maps2.html" ></object>';
+    }
+    </script>
             <div id="control" valign="middle" >
                 <ul>
                     <li><input type="checkbox" id="map" name="map" onclick="calc();"> show map</li>
@@ -19,8 +25,9 @@
             <div id="wrapper">
 
                 <div class="box">  <!-- box Display my topology -->
-                    <img id="myImage" src="BlankMap.gif" width="560" height="300">
-                        </div>
+                  <!--<img id="myImage" src="BlankMap.gif" width="560" height="300">-->
+
+                </div>
             </div><br />
 
             <div id="button">
@@ -28,12 +35,16 @@
             </div> <br />
 
 
+
+
             <script>
+            document.getElementById('box').innerHTML = '<object type="type/html" data="maps2.html" ></object>';;
+
                 function calc()
                 {
                     if (document.getElementById('map').checked)
                     {
-                        document.getElementById('myImage').src = 'usamap.gif';
+                        document.getElementById('box').innerHTML = '<object type="type/html" data="maps2.html" ></object>';;
                     } else {
                         document.getElementById('myImage').src = 'BlankMap.gif';
                     }
