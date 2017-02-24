@@ -13,7 +13,7 @@ requests.packages.urllib3.disable_warnings()
 import json
 import sys
 
-def gettopology():
+def gettopoinfo():
 	url = "https://10.10.2.29:8443/oauth2/token"
 
 	payload = {'grant_type': 'password', 'username': 'group8', 'password': 'Group8'}
@@ -31,7 +31,7 @@ def gettopology():
 	#	print topolist[i]
 	return topolist
 
-		
+
 
 if __name__ == "__main__":
 	if (sys.argv[1] == "pri"):

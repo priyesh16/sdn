@@ -3,7 +3,7 @@ requests.packages.urllib3.disable_warnings()
 import json
 import sys
 
-def getlinkobject():
+def getlinkinfo():
     url = "https://10.10.2.29:8443/oauth2/token"
     payload = {'grant_type': 'password', 'username': 'group8', 'password': 'Group8'}
     response = requests.post (url, data=payload, auth=('group8','Group8'), verify=False)

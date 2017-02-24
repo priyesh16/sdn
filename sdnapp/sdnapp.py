@@ -5,8 +5,6 @@ import sqlite3
 #import getlinkinfo
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
-from getlinkinfo import getlinkobject
-from topology import gettopology
 from process import *
 
 app = Flask(__name__) # create the application instance :)
@@ -61,8 +59,6 @@ def show_entries():
     print entries
     return render_template('show_entries.html', entries=entries)
 
-##added now
-
 @app.route('/add', methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
@@ -96,19 +92,13 @@ def logout():
 
 @app.route('/events')
 def events():
-    eventslist = getlinkobject()
-    requiredkeys = ['linkIndex', 'name', 'bandwidth']
-    eventslist = removekeys(eventslist, requiredkeys)
-    print eventslist
+    eventslist = getlinks()
     return render_template('events.html', entries=eventslist)
 
 @app.route('/topology')
 def topology():
-    topolist = gettopology()
-    requiredkeys = ['nodeIndex', 'name', 'hostName']
-    topolist = removekeys(topolist, requiredkeys)
-    print topolist
-    return render_template('topology.html', entries=topolist)
+    nodes = getnodes()
+    return render_template('topology.html', entries=nodes)
 
 
 if __name__ == "__main__":
