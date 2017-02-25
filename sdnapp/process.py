@@ -9,6 +9,15 @@ from links_rest import *
 from topology_rest import *
 from link_event_rest import *
 from lsp_rest import *
+import time
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+class EventHandler(FileSystemEventHandler):
+    def on_modified(self, event):
+        if event.src_path != "./logs":
+            return;
+        print "Got it!"
 
 def printdict(dictobj):
     for key in dictobj:
@@ -31,8 +40,8 @@ def removekeys(topolist, requiredkeys):
     for i in range(total_nodes):
         for key in to_be_deleted:
             del topolist[i][key]
-
     return topolist
+
 
 
 def getnodes():
@@ -69,24 +78,6 @@ def getlinks():
 
     return links;
 
-def getevents():
-    links = getlinkinfo();
-    total_links = len(links)
-    requiredkeys = ["name", "operationalStatus", "endA", "endZ"]
-    removekeys(links, requiredkeys)
-    #print links
-    for link in links:
-            link["endA_address"] = link["endA"]["ipv4Address"]["address"]
-            link["endZ_address"] = link["endZ"]["ipv4Address"]["address"]
-
-    '''
-    for link in links:
-        del link["endA"]
-        del link["endZ"]
-        printdict(link)
-    '''
-    return links;
-
 def getlsp():
     LSPs, authHeader = getlsprest()
     total_lsp = len(LSPs)
@@ -113,19 +104,34 @@ def setlsp(LSPs, authHeader, lspname):
     response = setlsprest(lsp, authHeader)
     print "----"
     print response
-    '''
-    # Fill only the required fields
-
-    #print links
-    for link in links:
-            link["endA_address"] = link["endA"]["ipv4Address"]["address"]
-            link["endZ_address"] = link["endZ"]["ipv4Address"]["address"]
-    '''
     return lsp;
+
+
+def handleevents():
+    event_handler = EventHandler()
+    observer = Observer()
+    observer.schedule(event_handler, path='.', recursive=False)
+    observer.start()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        observer.stop()
+    observer.join()
+
+def getevents():
+    event = {}
+    return event;
+
+def tunnelchange():
+    nodes = getnodes();
+    links = getlinks();
+    events = getevents();
 
 
 
 if __name__ == "__main__":
+    handleevents();
     if (sys.argv[1] == "pri"):
         lsp , authHeader = getlsp();
         setlsp(lsp, authHeader, 'GROUP_FIVE_SF_NY_LSP3');
@@ -133,4 +139,4 @@ if __name__ == "__main__":
     if (sys.argv[1] == "aziz"):
         getnodes();
     if (sys.argv[1] == "veda"):
-        processtopo();
+        processtopo();event_handler = MyHandler()
