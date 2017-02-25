@@ -13,6 +13,9 @@ import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import sdnapp
+import ast
+
+cwd = "/home/group-eight/sdn/sdnapp"
 
 
 def printdict(dictobj):
@@ -103,6 +106,17 @@ def setlsp(LSPs, authHeader, lspname):
     print response
     return lsp;
 
+def recentevents():
+    lst=[]
+    k=0
+    filetoread = cwd + "/logs_test"
+    for line in reversed(open(filetoread, "r").readlines()):
+        k=k+1
+        if(k==10):
+            break
+        data = ast.literal_eval(json.loads(line))
+        lst.append(data)
+    return(lst)
 
 def getevents():
     event = {}

@@ -92,7 +92,9 @@ def logout():
 
 @app.route('/events')
 def events():
-    eventslist = getlinks()
+    eventslist = recentevents()
+    #for event in  eventslist:
+        #print event
     return render_template('events.html', entries=eventslist)
 
 firsttime = 0
@@ -100,11 +102,14 @@ firsttime = 0
 def topology():
     global firsttime;
     nodes = getnodes()
-    if (firsttime == 0):
-        subprocess.call('python ./ checkfile.py', shell=True)
-        firsttime = 1
-    return render_template('topology.html', entries=nodes)
+    print "=================================="
+    print "fisttime " + str(firsttime)
 
+    if (firsttime == 0):
+        subprocess.Popen(['python', '/home/group-eight/sdn/sdnapp/checkfile.py'])
+        firsttime = 1
+    print "fisttime " + str(firsttime)
+    return render_template('topology.html', entries=nodes)
 
 if __name__ == "__main__":
 	globals()[sys.argv[1]]()
