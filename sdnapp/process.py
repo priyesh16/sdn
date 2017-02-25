@@ -162,19 +162,46 @@ def getlsp():
     #filter out our lsps
     LSPs = [lsp for lsp in LSPs if lsp['name'].find("TEN") != -1]
 
+    '''
     for lsp in LSPs:
         for key in lsp:
             print key + " = " + str(lsp[key])
         break
+    '''
 
-    requiredkeys = ["from", "to", "name","pathType","tunnelId","operationalStatus"]
+    requiredkeys = ["from", "to", "name","pathType","tunnelId","operationalStatus","liveProperties"]
 
     removekeys(LSPs, requiredkeys)
     for lsp in LSPs:
             lsp["From"] = lsp["from"]["address"]
             lsp["To"] = lsp["to"]["address"]
             lsp["tunnelId"] = str(lsp["tunnelId"])
-            #print lsp
+            lsp["routehops"] = str(len(lsp["liveProperties"]["ero"]))
+            i = 0;
+            lsp["route0"] = lsp["from"]["address"]
+            router = getrouterfromaddress(lsp["route0"])
+            lsp["router0"] = router['name']
+            for ero in lsp["liveProperties"]["ero"]:
+                i = i + 1;
+                for key in ero:
+                    if key == "address":
+                        newkey = "route" + str(i)
+                        lsp[newkey] = ero[key]
+                        router = getrouterfromaddress(lsp[newkey])
+                        newkey = "router" + str(i)
+                        lsp[newkey] = router['name']
+
+            destkey = "route" + str(len(lsp["liveProperties"]["ero"]) + 1)
+            lsp[destkey] = lsp["to"]["address"]
+            #router = getrouterfromaddress(lsp[destkey])
+            #destkey = "router" + str(len(lsp["liveProperties"]["ero"]) + 1)
+            #lsp[destkey] = router['name']
+
+    for lsp in LSPs:
+        del lsp["from"]
+        del lsp["to"]
+        del lsp["liveProperties"]
+        printdict(lsp)
     return LSPs
 
 def getlspforset():
@@ -229,6 +256,8 @@ def getlinkfromevent(event, links):
 def getrouterfromaddress(address):
     got = 0
     for router in routers:
+        if router['router_id'] == address:
+            return router
         for key in router['interfaces']:
             if key['address'] == address:
                 got = 1
@@ -236,6 +265,13 @@ def getrouterfromaddress(address):
         if (got == 1):
             break
     return router
+
+def computelsp():
+    LSPs = getlsp()
+    lsp = LSPs[0]
+    for key in lsp:
+        print key + " = " + str(lsp[key])
+
 
 def tunnelchange():
     print "got event changing tunnel"

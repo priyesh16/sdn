@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple markers</title>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 50%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 50px 110px/*left and right*/ /*bot*/ ;
+      }
+   
+   #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+    }
+
+    </style>
+  </head>
+  <body>
+      
+      <div id="floating-panel">
+          <input onclick="clearMarkers();" type=button value="Hide Markers">
+              <input onclick="showMarkers();" type=button value="Show All Markers">
+                  <input onclick="clearroute();" type=button value="Hide route">
+
+                      </div>
+      <div id="map"></div>
+      <p>Click on the map to add markers.</p>
+      <script>
+          
+          var map;
+          var centerOfUsMap = {lat: 39.50, lng:  -98.35};
+          var markers = [];
+          var flightPlanCoordinates1=[];
+          var image1 = 'router2.jpeg';
+
+     var nodes = [
+                    ['SF', 37.7749,  -122.4194],
+                    ['CHI', 41.881832, -87.623177],
+                    ['Dallas', 32.897480, -97.040443],
+                    ['Miami', 25.761681, -80.191788],
+                    ['NY', 40.730610, -73.935242],
+                    ['tempa', 27.964157, -82.452606],
+                    ['hou', 29.761993,-95.366302],
+                    ['LA', 34.052235, -118.243683 ]
+                    ];
+     
+     
+     var sfLatLng = {lat: 37.7749, lng: -122.4194};
+     var chiLatLng = {lat: 41.881832, lng: -87.623177};
+     var dallasLatLng = {lat: 32.897480, lng: -97.040443};
+     var miamiLatLng = {lat:25.761681, lng:-80.191788};
+     var nyLatLng = {lat:40.730610, lng:-73.935242 };
+     var tempaLatLng = {lat:27.964157, lng:-82.452606 };
+     var houLatLng = {lat:29.761993, lng:-95.366302 };
+     var laLatLng = {lat:34.052235, lng:-118.243683 };
+     
+     
+    
+    //we have to fix it in case we want to show new routes
+    var flightPlanCoordinates = [
+                                  {lat: 37.7749, lng: -122.4194},
+                                  {lat: 41.881832, lng: -87.623177},
+                                  dallasLatLng,
+                                  miamiLatLng,
+                                  nyLatLng,
+                                  tempaLatLng,
+                                  houLatLng,
+                                  laLatLng,sfLatLng
+                                  
+                                  ];
+
+
+
+          function initMap() {
+              
+              map = new google.maps.Map(document.getElementById('map'), {
+                                        zoom: 3,
+                                        center: centerOfUsMap,
+                                        //mapTypeId: 'terrain'
+                                        });
+                                        
+                                        //create a list of lat to draw a line
+                                       
+           
+           
+   
+           
+           
+                                        map.addListener('click', function(event) {
+                                                        route(map);
+                                                        setMarkers(map);
+                                                        });
+                                              
+
+          }
+      
+      function route(map){
+          var flightPath = new google.maps.Polyline({ path: flightPlanCoordinates,
+                                                    geodesic: true,
+                                                    strokeColor: '#FF0000',
+                                                    strokeOpacity: 1.0,
+                                                    strokeWeight: 2
+                                                    });
+         
+         flightPath.setMap(map);
+
+      }
+     
+     
+     function setroute(map){
+         
+         
+         route(map);
+         
+         
+     }
+    function setMarkers(map){
+        
+        var image = {
+            url: 'router2.jpeg',
+            // This marker is 20 pixels wide by 32 pixels high.
+            scaledSize: new google.maps.Size(20, 32),
+            // The origin for this image is (0, 0).
+            origin: new google.maps.Point(0, 0),
+            // The anchor for this image is the base of the flagpole at (0, 32).
+            anchor: new google.maps.Point(0, 32)
+        };
+        
+      for (var i = 0; i < nodes.length; i++) {
+          var node = nodes[i];
+          var marker = new google.maps.Marker({
+                                              position: {lat: node[1], lng: node[2]},
+                                              map: map,
+                                              icon: image,
+                                           //   shape: shape,
+                                              title: node[0],
+                                           //   zIndex: beach[3]
+                                              });
+      
+      markers.push(marker);
+      }
+      
+    }
+      
+      
+      // Sets the map on all markers in the array.
+      function setMapOnAll(map) {
+          for (var i = 0; i < markers.length; i++) {
+              markers[i].setMap(map);
+          }
+      }
+      
+      // Removes the markers from the map, but keeps them in the array.
+      function clearMarkers() {
+          setMapOnAll(null);
+      }
+      
+      function clearroute(){
+          setroute(null);
+      }
+      // Shows any markers currently in the array.
+      function showMarkers() {
+          setMapOnAll(map);
+      }
+      
+      // Deletes all markers in the array by removing references to them.
+      
+      </script>
+      
+      
+      
+    
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key= AIzaSyAHSVR7vphoCovcjum0NenDZPIjHlrxdbo&callback=initMap">
+    </script>
+  </body>
+</html>

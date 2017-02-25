@@ -3,17 +3,28 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <style>
+  table, tr,th {
+      border: 1px solid black;
+  }
+  </style>
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
 
 	<link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}"> <!-- CSS reset -->
 	<link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}"> <!-- Resource style -->
 	<script src="{{ url_for('static', filename='modernizr.js') }}"></script> <!-- Modernizr -->
-	<script type="text/javascript" src="{{ url_for('static', filename='d3.v2.js') }}"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+ <script>
+     $(function(){
+       $("#includedContent").load("{{ url_for('static', filename='maps.html') }}");
+     });
+     </script>
 
 	<title>SDN APP</title>
 </head>
-<body>
+
+<body onload="CreateTableFromJSON(); initMap();">
 	<header class="cd-header">
 		<h1>SDN App</h1>
 	</header>
@@ -32,18 +43,13 @@
 			</div> <!-- cd-tab-filter -->
 		</div> <!-- cd-tab-filter-wrapper -->
 
-<ul>Table data pulled(button below), d3 graph not displaying, add functions after checking filters!!</ul>
-			<svg id="cloud" width="800" height="600">
-            <defs>
-                <marker id="arrow" viewbox="0 -5 10 10" refX="18" refY="0"
-                        markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M0,-5L10,0L0,5Z">
-                </marker>
-           </defs>
-</svg>
+      <div id="#includedContent">
+      </div>
+<section class="cd-gallery">
+<div id="showData">
 
-        <input type="button" onclick="CreateTableFromJSON()" value="Table for Topology data" />
-    <div id="showData"></div>
+</div>
+
 		</section> <!-- cd-gallery -->
 
 		<div class="cd-filter">
@@ -61,7 +67,7 @@
 
 					<ul class="cd-filter-content cd-filters list">
 						<li>
-							<input class="filter" data-filter=".check1" type="checkbox" id="checkbox1">
+							<input class="filter" data-filter=".check1" type="checkbox" id="checkbox1" onclick="Mapsfunction()">
 			    			<label class="checkbox-label" for="checkbox1">Show Map</label>
 						</li>
 						<li>
@@ -123,7 +129,6 @@
 		<a href="#0" class="cd-filter-trigger">Filters</a>
 	</main> <!-- cd-main-content -->
 
-
   <script>
       function CreateTableFromJSON() {
           // EXTRACT VALUE FOR HTML HEADER.
@@ -140,9 +145,7 @@
 
           // CREATE DYNAMIC TABLE.
           var table = document.createElement("table");
-
           // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
-
           var tr = table.insertRow(-1);                   // TABLE ROW.
 
           for (var i = 0; i < col.length; i++) {
@@ -163,14 +166,13 @@
           }
           // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
           var divContainer = document.getElementById("showData");
-          divContainer.innerHTML = "";
-          divContainer.appendChild(table);
+      divContainer.innerHTML = "";
+      divContainer.appendChild(table);
       }
   </script>
+
 <script src="{{ url_for('static', filename='jquery-2.1.1.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.mixitup.min.js') }}"></script>
 <script src="{{ url_for('static', filename='main.js') }}"></script> <!-- Resource jQuery -->
-<link href="{{ url_for('static', filename='cloud.css') }}" rel="stylesheet" type="text/css" />
-<script src="{{ url_for('static', filename='cloud.js') }}" type="text/javascript"></script>
 </body>
 </html>
