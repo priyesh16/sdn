@@ -16,22 +16,12 @@ from process import *
 
 class EventHandler(FileSystemEventHandler):
     def on_modified(self, event):
-        print event.src_path
         if event.src_path != "./logs":
-            return;
-        target = open("./testfile", "a+")
-        target.write("this is it \n")
+            return;  
         tunnelchange()
 
 
 def handleevents():
-    print "running handler"
-    print "asdfa"
-    target = open("./testfile", "a+")
-    target.write("this is it \n")
-    target.close();
-    print "started from"
-
     event_handler = EventHandler()
     observer = Observer()
     observer.schedule(event_handler, path='.', recursive=False)

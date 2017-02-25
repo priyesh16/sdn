@@ -9,10 +9,12 @@
 <div id="timeline">
 <div id="timeline_bar">
 </div>
-<li>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</li>
-<li>It has survived not only five centuries, but also the leap into electronic typesetting</li>
-<li>Contrary to popular belief, Lorem Ipsum is not simply random text.</li>
-<li>Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum"</li>
+<ul class=entries>
+{% for link in entries %}
+<li>On {{link['timestamp']}} Router: {{link['router_name']}} {{link['status']}} with Interface: {{link['interface_name']}} Router ID: {{link['router_id']}} Interface address: {{link['interface_address']}}</li>
+
+{% endfor %}
+</ul>
 </div>
 
 </div>

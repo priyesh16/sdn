@@ -19,10 +19,10 @@ cwd = "/home/group-eight/sdn/sdnapp"
 
 
 def printdict(dictobj):
-	pass
-    #for key in dictobj:
-            #print "\n\t" + key +" = " + dictobj[key],
-    #print ""
+    for key in dictobj:
+        print "\n\t" + key +" = " + dictobj[key],
+
+    print ""
 
 def removekeys(topolist, requiredkeys):
     total_nodes = len(topolist)
@@ -42,12 +42,10 @@ def removekeys(topolist, requiredkeys):
             del topolist[i][key]
     return topolist
 
-
-
 def getnodes():
     nodes = gettopoinfo();
     total_nodes = len(nodes)
-    requiredkeys = ["name", "hostName"]
+    requiredkeys = ["name", "hostName","AutonomousSystem","topology"]
     removekeys(nodes, requiredkeys)
     for node in nodes:
         if  node['hostName'] == "SF":
@@ -56,8 +54,17 @@ def getnodes():
             node['Type'] = 'PE'
         else:
             node['Type'] = 'Core'
+
+        node["AS"]=str(node["AutonomousSystem"]["asNumber"])
+        node["coordinate"]=str(node["topology"]["coordinates"]["coordinates"])
+
+    for node in nodes:
+        del node["AutonomousSystem"]
+        del node["topology"]
         printdict(node)
-    return nodes
+    return node
+
+
 
 def getlinks():
     links = getlinkinfo();
@@ -123,6 +130,7 @@ def getevents():
     return event;
 
 def tunnelchange():
+    print "got event changing tunnel"
     nodes = getnodes();
     links = getlinks();
     events = getevents();
