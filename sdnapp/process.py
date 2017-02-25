@@ -14,9 +14,65 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import sdnapp
 import ast
-import json
 
-cwd = "/home/group-eight/sdn/sdnapp"
+cwd = "/home/group-eight/pri/sdn/sdnapp"
+
+routers = [
+           { 'name': 'chicago', 'router_id': '10.210.10.124', 'interfaces': [
+                                                                            { 'name': 'ge-1/0/1', 'address': '10.210.16.2' },
+                                                                            { 'name': 'ge-1/0/2', 'address': '10.210.13.2' },
+                                                                            { 'name': 'ge-1/0/3', 'address': '10.210.14.2' },
+                                                                            { 'name': 'ge-1/0/4', 'address': '10.210.17.2' }
+                                                                            ]
+            },
+           { 'name': 'san francisco', 'router_id': '10.210.10.100', 'interfaces': [
+                                                                            { 'name': 'ge-1/0/0', 'address': '10.210.18.1' },
+                                                                            { 'name': 'ge-1/0/1', 'address': '10.210.15.1' },
+                                                                            { 'name': 'ge-1/0/3', 'address': '10.210.16.1' }
+                                                                            ]
+            },
+           { 'name': 'dallas', 'router_id': '10.210.10.106', 'interfaces': [
+                                                                             { 'name': 'ge-1/0/0', 'address': '10.210.15.2' },
+                                                                             { 'name': 'ge-1/0/1', 'address': '10.210.19.1' },
+                                                                             { 'name': 'ge-1/0/2', 'address': '10.210.21.1' },
+                                                                             { 'name': 'ge-1/0/3', 'address': '10.210.11.1' },
+                                                                             { 'name': 'ge-1/0/4', 'address': '10.210.13.1' }
+                                                                             ]
+            },
+           { 'name': 'miami', 'router_id': '10.210.10.112', 'interfaces': [
+                                                                            { 'name': 'ge-1/0/0', 'address': '10.210.22.1' },
+                                                                            { 'name': 'ge-1/0/1', 'address': '10.210.24.1' },
+                                                                            { 'name': 'ge-1/0/2', 'address': '10.210.12.1' },
+                                                                            { 'name': 'ge-1/0/3', 'address': '10.210.11.2' },
+                                                                            { 'name': 'ge-1/0/4', 'address': '10.210.14.1' }
+                                                                            ]
+            },
+           { 'name': 'new york', 'router_id': '10.210.10.118', 'interfaces': [
+                                                                               { 'name': 'ge-1/0/3', 'address': '10.210.12.2' },
+                                                                               { 'name': 'ge-1/0/5', 'address': '10.210.17.1' },
+                                                                               { 'name': 'ge-1/0/7', 'address': '10.210.26.1' }
+                                                                               ]
+            },
+           { 'name': 'los angeles', 'router_id': '10.210.10.113', 'interfaces': [
+                                                                                  { 'name': 'ge-1/0/0', 'address': '10.210.18.2' },
+                                                                                  { 'name': 'ge-1/0/1', 'address': '10.210.19.2' },
+                                                                                  { 'name': 'ge-1/0/2', 'address': '10.210.20.1' }
+                                                                                  ]
+            },
+           { 'name': 'houston', 'router_id': '10.210.10.114', 'interfaces': [
+                                                                              { 'name': 'ge-1/0/0', 'address': '10.210.20.2' },
+                                                                              { 'name': 'ge-1/0/1', 'address': '10.210.21.2' },
+                                                                              { 'name': 'ge-1/0/2', 'address': '10.210.22.2' },
+                                                                              { 'name': 'ge-1/0/3', 'address': '10.210.25.1' }
+                                                                              ]
+            },
+           { 'name': 'tampa', 'router_id': '10.210.10.115', 'interfaces': [
+                                                                            { 'name': 'ge-1/0/0', 'address': '10.210.25.2' },
+                                                                            { 'name': 'ge-1/0/1', 'address': '10.210.24.2' },
+                                                                            { 'name': 'ge-1/0/2', 'address': '10.210.26.2' }
+                                                                            ]
+            }
+           ]
 
 
 def printdict(dictobj):
@@ -45,8 +101,12 @@ def removekeys(topolist, requiredkeys):
 
 def getnodes():
     nodes = gettopoinfo();
-  #  print(nodes)
     total_nodes = len(nodes)
+    """
+    for node in nodes:
+        for key in node:
+            print key + " = " + str(node[key])
+    """
     requiredkeys = ["name", "hostName","AutonomousSystem","topology"]
     removekeys(nodes, requiredkeys)
     for node in nodes:
@@ -56,35 +116,42 @@ def getnodes():
             node['Type'] = 'PE'
         else:
             node['Type'] = 'Core'
-
+        #print node
         node["AS"]=str(node["AutonomousSystem"]["asNumber"])
         node["coordinate"]=str(node["topology"]["coordinates"]["coordinates"])
 
     for node in nodes:
         del node["AutonomousSystem"]
         del node["topology"]
-       # printdict(node)
-    return ((nodes))
+        #printdict(node)
+    return nodes
 
 def getlinks():
     links = getlinkinfo();
     total_links = len(links)
+    """
+    for link in links:
+        for key in link:
+            print key + " = " + str(link[key])
+    """
     requiredkeys = ["name", "operationalStatus", "endA", "endZ"]
     removekeys(links, requiredkeys)
     #print links
     for link in links:
             link["IP_A"] = link["endA"]["ipv4Address"]["address"]
             link["IP_Z"] = link["endZ"]["ipv4Address"]["address"]
-            link["AZ_metric"] = str(link["endA"]["TEmetric"])
-            link["ZA_metric"] = str(link["endA"]["TEmetric"])
-            link["AZ_BW"] = str(link["endA"]["bandwidth"])
-            link["ZA_BW"] = str(link["endZ"]["bandwidth"])
+            #print link
+            #print link["endA"]["TEmetric"]
+            #link["AZ_metric"] = str(link["endA"]["TEmetric"])
+            #link["ZA_metric"] = str(link["endA"]["TEmetric"])
+            #link["AZ_BW"] = str(link["endA"]["bandwidth"])
+            #link["ZA_BW"] = str(link["endZ"]["bandwidth"])
 
 
     for link in links:
         del link["endA"]
         del link["endZ"]
-        printdict(link)
+        #printdict(link)
 
     return links;
 
@@ -92,9 +159,14 @@ def getlsp():
     LSPs, authHeader = getlsprest()
     total_lsp = len(LSPs)
 
-    LSPS = [lsp for lsp in LSPs if str(lsp['name']).contains("TEN")]
+    #filter out our lsps
+    LSPs = [lsp for lsp in LSPs if lsp['name'].find("TEN") != -1]
+
     for lsp in LSPs:
-        print lsp
+        for key in lsp:
+            print key + " = " + str(lsp[key])
+        break
+
     requiredkeys = ["from", "to", "name","pathType","tunnelId","operationalStatus"]
 
     removekeys(LSPs, requiredkeys)
@@ -103,6 +175,7 @@ def getlsp():
             lsp["To"] = lsp["to"]["address"]
             lsp["tunnelId"] = str(lsp["tunnelId"])
             #print lsp
+    return LSPs
 
 def getlspforset():
     LSPs, authHeader = getlsprest()
@@ -133,27 +206,55 @@ def setlsp(LSPs, authHeader, lspname):
     return lsp;
 
 def recentevents():
-    lst=[]
-    k=0
+    events=[]
+    tot_events=10
     filetoread = cwd + "/logs_test"
     for line in reversed(open(filetoread, "r").readlines()):
-        k=k+1
-        if(k==10):
+        tot_events = tot_events - 1
+        if(tot_events == 0):
             break
         data = ast.literal_eval(json.loads(line))
-        lst.append(data)
-    return(lst)
+        events.append(data)
+    #for event in events:
+        #printdict(event)
+    return(events)
 
-def getevents():
-    event = {}
-    return event;
+def getlinkfromevent(event, links):
+    if (event["status"] == "failed" or event["status"] == "healed"):
+            for link in links:
+                if link["IP_A"] == event["interface_address"]:
+                    break
+    return link
+
+def getrouterfromaddress(address):
+    got = 0
+    for router in routers:
+        for key in router['interfaces']:
+            if key['address'] == address:
+                got = 1
+                break
+        if (got == 1):
+            break
+    return router
 
 def tunnelchange():
     print "got event changing tunnel"
     nodes = getnodes();
     links = getlinks();
-    events = getevents();
+    events = recentevents();
+    LSPs = getlsp()
 
+    recentevent = events[0]
+    link = getlinkfromevent(recentevent, links)
+
+    routerA = getrouterfromaddress(link['IP_A'])
+    routerZ = getrouterfromaddress(link['IP_Z'])
+    print "link from " + routerA['name']  + " to ",
+    print routerZ['name'] + " failed "
+
+        #print link['IP_Z']
+
+    #print recentevent
 
 
 if __name__ == "__main__":
