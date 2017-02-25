@@ -12,17 +12,14 @@ from lsp_rest import *
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+import sdnapp
 
-class EventHandler(FileSystemEventHandler):
-    def on_modified(self, event):
-        if event.src_path != "./logs":
-            return;
-        print "Got it!"
 
 def printdict(dictobj):
-    for key in dictobj:
-            print "\n\t" + key +" = " + dictobj[key],
-    print ""
+	pass
+    #for key in dictobj:
+            #print "\n\t" + key +" = " + dictobj[key],
+    #print ""
 
 def removekeys(topolist, requiredkeys):
     total_nodes = len(topolist)
@@ -107,18 +104,6 @@ def setlsp(LSPs, authHeader, lspname):
     return lsp;
 
 
-def handleevents():
-    event_handler = EventHandler()
-    observer = Observer()
-    observer.schedule(event_handler, path='.', recursive=False)
-    observer.start()
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        observer.stop()
-    observer.join()
-
 def getevents():
     event = {}
     return event;
@@ -131,7 +116,6 @@ def tunnelchange():
 
 
 if __name__ == "__main__":
-    handleevents();
     if (sys.argv[1] == "pri"):
         lsp , authHeader = getlsp();
         setlsp(lsp, authHeader, 'GROUP_FIVE_SF_NY_LSP3');

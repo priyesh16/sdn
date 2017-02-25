@@ -6,7 +6,7 @@ import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
 from process import *
-
+import subprocess
 
 app = Flask(__name__) # create the application instance :)
 app.config.from_object(__name__) # load config from this file , sdnapp.py
@@ -57,8 +57,6 @@ def show_entries():
     db = get_db()
     cur = db.execute('select title, text from entries order by id desc')
     entries = cur.fetchall()
-    #handleevents();
-    print entries
     return render_template('show_entries.html', entries=entries)
 
 @app.route('/add', methods=['POST'])
@@ -97,9 +95,14 @@ def events():
     eventslist = getlinks()
     return render_template('events.html', entries=eventslist)
 
+firsttime = 0
 @app.route('/topology')
 def topology():
+    global firsttime;
     nodes = getnodes()
+    if (firsttime == 0):
+        subprocess.call('python ./ checkfile.py', shell=True)
+        firsttime = 1
     return render_template('topology.html', entries=nodes)
 
 

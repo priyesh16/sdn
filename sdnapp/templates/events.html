@@ -1,20 +1,19 @@
 <!doctype html>
 <title>SDN APP</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}" media=screen>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='timeline_style.css') }}" media=screen>
 
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<body>
+<div id="wrapper">
 
-<section class="intro">
-  <div class="container">
-    <h1>Link Event TimeLine &darr;</h1>
-  </div>
-</section>
+<div id="timeline">
+<div id="timeline_bar">
+</div>
+<li>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</li>
+<li>It has survived not only five centuries, but also the leap into electronic typesetting</li>
+<li>Contrary to popular belief, Lorem Ipsum is not simply random text.</li>
+<li>Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum"</li>
+</div>
 
-<section class="timeline">
-  <ul class=entries>
-  {% for link in entries %}
-   <li>{{link['name']}}</li>
-
-{% endfor %}
-
-  </ul>
-</section>
+</div>
+</body>
