@@ -1,0 +1,16 @@
+group-eight@groupeight-east:~/sdnthrowdown-2016-examples$ python link_event_client.py
+link_event : 1
+link_event : {"status": "failed", "router_id": "10.210.10.115", "timestamp": "Fri:05:14:50", "interface_address": "10.210.26.2", "interface_name": "ge-1/0/2", "router_name": "tampa"}
+{u'interface_address': u'10.210.26.2',
+ u'interface_name': u'ge-1/0/2',
+ u'router_id': u'10.210.10.115',
+ u'router_name': u'tampa',
+ u'status': u'failed',
+ u'timestamp': u'Fri:05:14:50'}
+link_event : {"status": "healed", "router_id": "10.210.10.115", "timestamp": "Fri:05:15:53", "interface_address": "10.210.26.2", "interface_name": "ge-1/0/2", "router_name": "tampa"}
+{u'interface_address': u'10.210.26.2',
+ u'interface_name': u'ge-1/0/2',
+ u'router_id': u'10.210.10.115',
+ u'router_name': u'tampa',
+ u'status': u'healed',
+ u'timestamp': u'Fri:05:15:53'}
