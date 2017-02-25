@@ -64,8 +64,6 @@ def getnodes():
         printdict(node)
     return node
 
-
-
 def getlinks():
     links = getlinkinfo();
     total_links = len(links)
@@ -73,9 +71,12 @@ def getlinks():
     removekeys(links, requiredkeys)
     #print links
     for link in links:
-            link["endA_address"] = link["endA"]["ipv4Address"]["address"]
-            link["endZ_address"] = link["endZ"]["ipv4Address"]["address"]
-            link["endZ_metric"] = str(link["endZ"]["TEmetric"])
+            link["IP_A"] = link["endA"]["ipv4Address"]["address"]
+            link["IP_Z"] = link["endZ"]["ipv4Address"]["address"]
+            link["AZ_metric"] = str(link["endA"]["TEmetric"])
+            link["ZA_metric"] = str(link["endA"]["TEmetric"])
+            link["AZ_BW"] = str(link["endA"]["bandwidth"])
+            link["ZA_BW"] = str(link["endZ"]["bandwidth"])
 
 
     for link in links:
