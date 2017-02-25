@@ -14,6 +14,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import sdnapp
 import ast
+import json
 
 cwd = "/home/group-eight/sdn/sdnapp"
 
@@ -44,6 +45,7 @@ def removekeys(topolist, requiredkeys):
 
 def getnodes():
     nodes = gettopoinfo();
+  #  print(nodes)
     total_nodes = len(nodes)
     requiredkeys = ["name", "hostName","AutonomousSystem","topology"]
     removekeys(nodes, requiredkeys)
@@ -61,8 +63,8 @@ def getnodes():
     for node in nodes:
         del node["AutonomousSystem"]
         del node["topology"]
-        printdict(node)
-    return node
+       # printdict(node)
+    return ((nodes))
 
 def getlinks():
     links = getlinkinfo();
@@ -87,6 +89,22 @@ def getlinks():
     return links;
 
 def getlsp():
+    LSPs, authHeader = getlsprest()
+    total_lsp = len(LSPs)
+
+    LSPS = [lsp for lsp in LSPs if str(lsp['name']).contains("TEN")]
+    for lsp in LSPs:
+        print lsp
+    requiredkeys = ["from", "to", "name","pathType","tunnelId","operationalStatus"]
+
+    removekeys(LSPs, requiredkeys)
+    for lsp in LSPs:
+            lsp["From"] = lsp["from"]["address"]
+            lsp["To"] = lsp["to"]["address"]
+            lsp["tunnelId"] = str(lsp["tunnelId"])
+            #print lsp
+
+def getlspforset():
     LSPs, authHeader = getlsprest()
     total_lsp = len(LSPs)
     requiredkeys = ["from", "to", "name", "lspIndex", "pathType", "plannedProperties"]
@@ -139,11 +157,4 @@ def tunnelchange():
 
 
 if __name__ == "__main__":
-    if (sys.argv[1] == "pri"):
-        lsp , authHeader = getlsp();
-        setlsp(lsp, authHeader, 'GROUP_FIVE_SF_NY_LSP3');
-        setlsp();
-    if (sys.argv[1] == "aziz"):
-        getnodes();
-    if (sys.argv[1] == "veda"):
-        processtopo();event_handler = MyHandler()
+    globals()[sys.argv[1]]()
