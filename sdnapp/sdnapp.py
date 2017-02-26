@@ -16,7 +16,8 @@ app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'sdn.db'),
     SECRET_KEY='development key',
     USERNAME='admin',
-    PASSWORD='default'
+    PASSWORD='default',
+    TEMPLATES_AUTO_RELOAD=True
 ))
 app.config.from_envvar('SDN_SETTINGS', silent=True)
 

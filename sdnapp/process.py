@@ -15,7 +15,7 @@ from watchdog.events import FileSystemEventHandler
 import sdnapp
 import ast
 
-cwd = "/home/group-eight/pri/sdn/sdnapp"
+cwd = "/home/group-eight/sdn/sdnapp"
 
 routers = [
            { 'name': 'chicago', 'router_id': '10.210.10.124', 'interfaces': [
