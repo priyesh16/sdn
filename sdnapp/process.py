@@ -178,6 +178,7 @@ def getlsp():
             lsp["tunnelId"] = str(lsp["tunnelId"])
             lsp["routehops"] = str(len(lsp["liveProperties"]["ero"]))
             i = 0;
+            testlinks = [];
             lsp["route0"] = lsp["from"]["address"]
             router = getrouterfromaddress(lsp["route0"])
             lsp["router0"] = router['name']
@@ -188,11 +189,16 @@ def getlsp():
                         newkey = "route" + str(i)
                         lsp[newkey] = ero[key]
                         router = getrouterfromaddress(lsp[newkey])
+                        testlinks.append(getlinkfromaddress(lsp[newkey]));
                         newkey = "router" + str(i)
                         lsp[newkey] = router['name']
 
             destkey = "route" + str(len(lsp["liveProperties"]["ero"]) + 1)
             lsp[destkey] = lsp["to"]["address"]
+            print lsp['name']
+            for link in testlinks:
+                print "\t" + link['name']
+            lsp["computestatus"] = str(checklspstatus(testlinks))
             #router = getrouterfromaddress(lsp[destkey])
             #destkey = "router" + str(len(lsp["liveProperties"]["ero"]) + 1)
             #lsp[destkey] = router['name']
@@ -203,6 +209,28 @@ def getlsp():
         del lsp["liveProperties"]
         printdict(lsp)
     return LSPs
+
+def getlinkfromaddress(address):
+    links = getlinks();
+    #print links
+
+    for link in links:
+        if link['IP_A'] == address or link['IP_Z'] == address:
+            return link;
+
+def checklspstatus(testlinks):
+    links = getlinks();
+    for link in links:
+        if link['operationalStatus'] == 'Up':
+            continue
+        elif link in testlinks:
+            return False
+    return True
+
+def getpathcord():
+    LSPs = getlsp();
+    lsp = LSPs[0]
+
 
 def getlspforset():
     LSPs, authHeader = getlsprest()
