@@ -170,27 +170,8 @@ def getlspforset():
     requiredkeys = ["from", "to", "name", "lspIndex", "pathType", "plannedProperties"]
 
     removekeys(LSPs, requiredkeys)
+
     return LSPs, authHeader
-
-def setlsp(LSPs, authHeader, lspname):
-    for lsp in LSPs:
-        if lsp['name'] == lspname:
-            break
-
-    print lsp
-
-    ero= [{ 'topoObjectType': 'ipv4', 'address': '10.210.15.2'},
-          { 'topoObjectType': 'ipv4', 'address': '10.210.13.2'},
-          { 'topoObjectType': 'ipv4', 'address': '10.210.17.1'}
-         ]
-    lsp['plannedProperties'] = {
-        'ero': ero
-    }
-
-    response = setlsprest(lsp, authHeader)
-    print "----"
-    print response
-    return lsp;
 
 def recentevents():
     events=[]
@@ -226,38 +207,140 @@ def getrouterfromaddress(address):
             break
     return router
 
-def tunnelchange():
+SF_CH = "10.210.16.2"
+CH_SF = "10.210.16.1"
+
+NY_CH = "10.210.17.2"
+CH_NY = "10.210.17.1"
+
+SF_DA = "10.210.15.2"
+DA_SF = "10.210.15.1"
+
+DA_MI = "10.210.11.2"
+MI_DA = "10.210.11.1"
+
+MI_NY = "10.210.12.2"
+NY_MI = "10.210.12.1"
+
+available_erosSFNY = [
+    {"SF_CH_NY" :   [{u'topoObjectType': u'ipv4', u'address': SF_CH},
+                    {u'topoObjectType': u'ipv4', u'address': CH_NY},
+                    ]
+    },
+    {"SF_DA_MI_NY" :    [{u'topoObjectType': u'ipv4', u'address': SF_DA},
+                        {u'topoObjectType': u'ipv4', u'address': DA_MI},
+                        {u'topoObjectType': u'ipv4', u'address': MI_NY},
+                        ]
+    }
+]
+
+available_erosNYSF = [
+    {"NY_CH_SF" :   [{u'topoObjectType': u'ipv4', u'address': NY_CH},
+                    {u'topoObjectType': u'ipv4', u'address': CH_SF},
+                    ]
+    },
+    {"NY_MI_DA_SF" :    [{u'topoObjectType': u'ipv4', u'address': NY_MI},
+                        {u'topoObjectType': u'ipv4', u'address': MI_DA},
+                        {u'topoObjectType': u'ipv4', u'address': DA_SF},
+                        ]
+    },
+]
+
+
+def computeero(lsp, link):
+    available_eros = []
+    if lsp['name'].find('NY_SF') != -1:
+        available_eros = available_erosNYSF
+
+    if lsp['name'].find('SF_NY') != -1:
+        available_eros = available_erosSFNY
+
+    linkA = link['IP_A']
+    linkB = link['IP_Z']
+    print linkA
+    print linkB
+
+    #print "-----------"
+    #print available_eros
+    #print "-----------"
+
+    #prune failed links
+    for ero in available_eros:
+        for key in ero:
+            for path in ero[key]:
+                for key in path:
+                    if key == "address":
+                        if  path[key] == linkA or path[key] == linkB:
+                            available_eros.remove(ero)
+    print "+---------+"
+    for key in available_eros[0]:
+        print available_eros[0][key]
+        ero = available_eros[0][key]
+
+    print "+---------+"
+
+    return ero
+
+grouplspname = "GROUP_TEN_SF_NY_LSP3"
+
+def tunnelchange(test):
     print "got event changing tunnel"
-    nodes = getnodes();
+    LSPs, authHeader = getlsp()
+    #nodes = getnodes();
     links = getlinks();
-    events = recentevents();
+    #events = recentevents();
 
-    recentevent = events[0]
-    link = getlinkfromevent(recentevent, links)
+    if (test == 0):
+            link = getlinkfromevent(recentevent, links)
 
-    routerA = getrouterfromaddress(link['IP_A'])
-    routerZ = getrouterfromaddress(link['IP_Z'])
-    print "link from " + routerA['name']  + " to ",
-    print routerZ['name'] + " failed "
-    for link in links:
-        if link['name'] == 'L10.210.16.1_10.210.16.2' :
-            break
-    failedlsps = getfailedlsps(link);
-    for lsp in failedlsps:
-        print lsp['name']
-    #print failedlsps;
-        #print link['IP_Z']
+            routerA = getrouterfromaddress(link['IP_A'])
+            routerZ = getrouterfromaddress(link['IP_Z'])
+            print "link from " + routerA['name']  + " to ",
+            print routerZ['name'] + " failed "
 
-    #print recentevent
-
-def checklinksstatus(linkname):
-    links = getlinks();
-    test = 1;
-    if test == 1:
-        for link in links:
-            if link['name'] == 'L10.210.16.1_10.210.16.2' :
+    if (test == 1):
+        print "++++++++++++"
+        recentevent = {'status': 'healed', 'router_id': '10.210.10.113',
+            'timestamp': 'Sun:05:43:46', 'interface_address': '10.210.16.1',
+            'interface_name': 'ge-1/0/0', 'router_name': 'los angeles'}
+        for failedlink in links:
+            if failedlink['name'] == 'L10.210.16.1_10.210.16.2':
                 break
-        link['operationalStatus'] = 'Down'
+            failedlink['operationalStatus'] = 'Down'
+
+    if (test == 2):
+        recentevent = {'status': 'healed', 'router_id': '10.210.10.113',
+            'timestamp': 'Sun:05:43:46', 'interface_address': '10.210.15.1',
+            'interface_name': 'ge-1/0/0', 'router_name': 'los angeles'}
+        for failedlink in links:
+            if failedlink['name'] == 'L10.210.15.1_10.210.15.2':
+                break
+            failedlink['operationalStatus'] = 'Down'
+
+
+    failedlsps = getfailedlsps(LSPs, failedlink, test);
+    for failedlsp in failedlsps:
+        if failedlsp['name'] == "GROUP_TEN_SF_NY_LSP3":
+            break
+
+    ero = computeero(failedlsp, failedlink)
+    lsp_list , authHeader = getlsprest();
+    lsp = modifylsprest(lsp_list, ero, 'GROUP_TEN_SF_NY_LSP3')
+
+    setlsprest(lsp, authHeader);
+
+def checklinksstatus(linkname, test):
+    links = getlinks();
+    if (test == 1):
+        for link in links:
+            if link['name'] == 'L10.210.16.1_10.210.16.2':
+                link['operationalStatus'] = 'Down'
+                break
+    if (test == 2):
+        for link in links:
+            if link['name'] == 'L10.210.15.1_10.210.15.2':
+                link['operationalStatus'] = 'Down'
+                break
 
     for link in links:
         #print link['name'], link['operationalStatus']
@@ -267,18 +350,15 @@ def checklinksstatus(linkname):
             return False
     return True
 
-def getfailedlsps(failedlink):
-    LSPs = getlsp()
+def getfailedlsps(LSPs, failedlink, test):
     failedlsps = []
-
     for lsp in LSPs:
         for key in lsp:
             if key.find("link") != -1:
-                if checklinksstatus(lsp[key]) == False:
+                if checklinksstatus(lsp[key], test) == False:
                     failedlsps.append(lsp);
-
+    #print failedlsps
     return failedlsps
-
 
 def getlsp():
     LSPs, authHeader = getlsprest()
@@ -294,8 +374,7 @@ def getlsp():
         break
     '''
 
-    requiredkeys = ["from", "to", "name","pathType","tunnelId","operationalStatus","liveProperties"]
-
+    requiredkeys = ["from", "to", "name", "pathType","lspIndex","tunnelId","operationalStatus","liveProperties"]
     removekeys(LSPs, requiredkeys)
     for lsp in LSPs:
             lsp["From"] = lsp["from"]["address"]
@@ -338,8 +417,12 @@ def getlsp():
         del lsp["to"]
         del lsp["liveProperties"]
         #printdict(lsp)
-    return LSPs
-
+    return LSPs, authHeader
 
 if __name__ == "__main__":
-    globals()[sys.argv[1]]()
+    print len(sys.argv)
+    if (len(sys.argv) == 3):
+        test = int(sys.argv[2])
+        tunnelchange(test)
+    else:
+        globals()[sys.argv[1]]()
