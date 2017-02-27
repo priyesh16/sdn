@@ -14,6 +14,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import sdnapp
 import ast
+import random
 
 cwd = "/home/group-eight/sdn/sdnapp"
 
@@ -222,6 +223,24 @@ MI_DA = "10.210.11.1"
 MI_NY = "10.210.12.2"
 NY_MI = "10.210.12.1"
 
+SF_LA = "10.210.18.2"
+LA_SF = "10.210.18.1"
+
+LA_HO = "10.210.20.2"
+HO_LA = "10.210.20.1"
+
+HO_TA = "10.210.25.2"
+TA_HO = "10.210.25.1"
+
+TA_NY = "10.210.26.1"
+NY_TA = "10.210.26.2"
+
+DA_CH = "10.210.13.2"
+CH_DA = "10.210.13.1"
+
+MI_CH = "10.210.14.2"
+CH_MI = "10.210.14.1"
+
 available_erosSFNY = [
     {"SF_CH_NY" :   [{u'topoObjectType': u'ipv4', u'address': SF_CH},
                     {u'topoObjectType': u'ipv4', u'address': CH_NY},
@@ -231,7 +250,31 @@ available_erosSFNY = [
                         {u'topoObjectType': u'ipv4', u'address': DA_MI},
                         {u'topoObjectType': u'ipv4', u'address': MI_NY},
                         ]
+    },
+    {"SF_LA_HO_TA_NY" : [{u'topoObjectType': u'ipv4', u'address': SF_LA},
+                        {u'topoObjectType': u'ipv4', u'address': LA_HO},
+                        {u'topoObjectType': u'ipv4', u'address': HO_TA},
+                        {u'topoObjectType': u'ipv4', u'address': TA_NY}
+                        ]
+    },
+    {"SF_DA_CH_NY" : [{u'topoObjectType': u'ipv4', u'address': SF_DA},
+                        {u'topoObjectType': u'ipv4', u'address': DA_CH},
+                        {u'topoObjectType': u'ipv4', u'address': CH_NY}
+                        ]
+    },
+    {"SF_DA_CH_MI_NY" : [{u'topoObjectType': u'ipv4', u'address': SF_DA},
+                        {u'topoObjectType': u'ipv4', u'address': DA_CH},
+                        {u'topoObjectType': u'ipv4', u'address': CH_MI},
+                        {u'topoObjectType': u'ipv4', u'address': MI_NY}
+                        ]
+    },
+    {"SF_CH_MI_NY" : [{u'topoObjectType': u'ipv4', u'address': SF_CH},
+                        {u'topoObjectType': u'ipv4', u'address': CH_MI},
+                        {u'topoObjectType': u'ipv4', u'address': MI_NY}
+                        ]
     }
+
+
 ]
 
 available_erosNYSF = [
@@ -244,6 +287,29 @@ available_erosNYSF = [
                         {u'topoObjectType': u'ipv4', u'address': DA_SF},
                         ]
     },
+    {"NY_TA_HO_LA_SF" : [{u'topoObjectType': u'ipv4', u'address': NY_TA},
+                        {u'topoObjectType': u'ipv4', u'address': TA_HO},
+                        {u'topoObjectType': u'ipv4', u'address': HO_LA},
+                        {u'topoObjectType': u'ipv4', u'address': LA_SF}
+                        ]
+    },
+    {"NY_CH_DA_SF" : [{u'topoObjectType': u'ipv4', u'address': NY_CH},
+                        {u'topoObjectType': u'ipv4', u'address': CH_DA},
+                        {u'topoObjectType': u'ipv4', u'address': DA_SF}
+                        ]
+    },
+    {"NY_MI_CH_DA_SF" : [{u'topoObjectType': u'ipv4', u'address': NY_MI},
+                        {u'topoObjectType': u'ipv4', u'address': MI_CH},
+                        {u'topoObjectType': u'ipv4', u'address': CH_DA},
+                        {u'topoObjectType': u'ipv4', u'address': DA_SF}
+                        ]
+    },
+    {"NY_MI_CH_SF" : [{u'topoObjectType': u'ipv4', u'address': NY_MI},
+                        {u'topoObjectType': u'ipv4', u'address': MI_CH},
+                        {u'topoObjectType': u'ipv4', u'address': CH_SF}
+                        ]
+    }
+
 ]
 
 
@@ -267,10 +333,11 @@ def computeero(lsp, link):
                         if  path[key] == linkA or path[key] == linkB:
                             available_eros.remove(ero)
 
-    for key in available_eros[0]:
-        print "\t",
-        print available_eros[0][key]
-        ero = available_eros[0][key]
+    max = len(available_eros)
+    num=random.randint(0, max - 1)
+
+    for key in available_eros[num]:
+        ero = available_eros[num][key]
 
     return ero
 
@@ -310,6 +377,14 @@ def tunnelchange(test):
                 break
             failedlink['operationalStatus'] = 'Down'
 
+    if (test == 3):
+        recentevent = {'status': 'healed', 'router_id': '10.210.10.113',
+                'timestamp': 'Sun:05:43:46', 'interface_address': '10.210.15.1',
+                'interface_name': 'ge-1/0/0', 'router_name': 'los angeles'}
+        for failedlink in links:
+            if failedlink['name'] == 'L10.210.18.1_10.210.18.2':
+                break
+            failedlink['operationalStatus'] = 'Down'
 
     failedlsps = getfailedlsps(LSPs, failedlink, test);
     for failedlsp in failedlsps:
@@ -331,6 +406,12 @@ def checklinksstatus(linkname, test):
             if link['name'] == 'L10.210.15.1_10.210.15.2':
                 link['operationalStatus'] = 'Down'
                 break
+    if (test == 3):
+        for link in links:
+            if link['name'] == 'L10.210.18.1_10.210.18.2':
+                link['operationalStatus'] = 'Down'
+                break
+
 
     for link in links:
         #print link['name'], link['operationalStatus']
