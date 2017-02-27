@@ -257,12 +257,6 @@ def computeero(lsp, link):
 
     linkA = link['IP_A']
     linkB = link['IP_Z']
-    print linkA
-    print linkB
-
-    #print "-----------"
-    #print available_eros
-    #print "-----------"
 
     #prune failed links
     for ero in available_eros:
@@ -272,12 +266,11 @@ def computeero(lsp, link):
                     if key == "address":
                         if  path[key] == linkA or path[key] == linkB:
                             available_eros.remove(ero)
-    print "+---------+"
+
     for key in available_eros[0]:
+        print "\t",
         print available_eros[0][key]
         ero = available_eros[0][key]
-
-    print "+---------+"
 
     return ero
 
@@ -320,14 +313,11 @@ def tunnelchange(test):
 
     failedlsps = getfailedlsps(LSPs, failedlink, test);
     for failedlsp in failedlsps:
-        if failedlsp['name'] == "GROUP_TEN_SF_NY_LSP3":
-            break
-
-    ero = computeero(failedlsp, failedlink)
-    lsp_list , authHeader = getlsprest();
-    lsp = modifylsprest(lsp_list, ero, 'GROUP_TEN_SF_NY_LSP3')
-
-    setlsprest(lsp, authHeader);
+        print failedlsp['name'] + " failed, computing new route"
+        ero = computeero(failedlsp, failedlink)
+        lsp_list , authHeader = getlsprest();
+        lsp = modifylsprest(lsp_list, ero, failedlsp['name'])
+        setlsprest(lsp, authHeader);
 
 def checklinksstatus(linkname, test):
     links = getlinks();
@@ -344,19 +334,30 @@ def checklinksstatus(linkname, test):
 
     for link in links:
         #print link['name'], link['operationalStatus']
+        print "\t " + link['name']
         if link['operationalStatus'] == 'Up':
             continue
         elif link['name'] == linkname:
             return False
+    print "\t\t all links up"
     return True
 
 def getfailedlsps(LSPs, failedlink, test):
     failedlsps = []
     for lsp in LSPs:
+        print "check lsp :" + lsp['name']
         for key in lsp:
             if key.find("link") != -1:
+                print "\tcheck link :" + key + " " + lsp[key],
+                if lsp[key] == failedlink['name']:
+                    print " is down"
+                    failedlsps.append(lsp);
+                else:
+                    print " is up"
+                '''
                 if checklinksstatus(lsp[key], test) == False:
                     failedlsps.append(lsp);
+                '''
     #print failedlsps
     return failedlsps
 
@@ -420,7 +421,6 @@ def getlsp():
     return LSPs, authHeader
 
 if __name__ == "__main__":
-    print len(sys.argv)
     if (len(sys.argv) == 3):
         test = int(sys.argv[2])
         tunnelchange(test)

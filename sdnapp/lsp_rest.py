@@ -30,7 +30,7 @@ CH_NY = "10.210.17.1"
 def modifylsprest(lsp_list, ero, name):
     # Find target LSP to use lspIndex
     for lsp in lsp_list:
-        if lsp['name'] == 'GROUP_TEN_SF_NY_LSP3':
+        if lsp['name'] == name:
             break
 
     # Fill only the required fields
