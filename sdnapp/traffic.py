@@ -89,14 +89,14 @@ ipToLsp= {
 }
 
 routes= {
-    'GROUP_EIGHT_NY_SF_LSP1' : ['new york','miami','chicago','san francisco'],
-    'GROUP_EIGHT_NY_SF_LSP2' : ['new york','miami','chicago','dallas','san francisco'],
-    'GROUP_EIGHT_NY_SF_LSP3' : ['new york','chicago','','dallas','san francisco'],
-    'GROUP_EIGHT_NY_SF_LSP4' : ['new york','miami','dallas','san francisco'],
+    'GROUP_EIGHT_NY_SF_LSP1' : ['new york','chicago','san francisco'],
+    'GROUP_EIGHT_NY_SF_LSP2' : ['new york','chicago','san francisco'],
+    'GROUP_EIGHT_NY_SF_LSP3' : ['new york','chicago','san francisco'],
+    'GROUP_EIGHT_NY_SF_LSP4' : ['new york','chicago','san francisco'],
     'GROUP_EIGHT_SF_NY_LSP1' : ['san francisco','chicago','new york'],
-    'GROUP_EIGHT_SF_NY_LSP2' : ['san francisco','dallas','miami','new york'],
-    'GROUP_EIGHT_SF_NY_LSP3' : ['san francisco','houston','tampa','new york'],
-    'GROUP_EIGHT_SF_NY_LSP4' : ['san francisco','dallas','chicago','new york']
+    'GROUP_EIGHT_SF_NY_LSP2' : ['san francisco','chicago','new york'],
+    'GROUP_EIGHT_SF_NY_LSP3' : ['san francisco','chicago','new york'],
+    'GROUP_EIGHT_SF_NY_LSP4' : ['san francisco','chicago','new york']
 }
 
 def writelspjson():

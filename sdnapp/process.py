@@ -162,9 +162,6 @@ def getlinkfromaddress(address, links):
         if link['IP_A'] == address or link['IP_Z'] == address:
             return link;
 
-
-
-
 def getlspforset():
     LSPs, authHeader = getlsprest()
     total_lsp = len(LSPs)
@@ -348,12 +345,12 @@ def tunnelchange(test):
     LSPs, authHeader = getlsp()
     links = getlinks();
 
-    print "++++++++++++++++++++++++++"
-    if (test == 0):
+    #print "++++++++++++++++++++++++++"
+    if (test == "none"):
             events = recentevents()
             recentevent = events[1]
-            print recentevent;
-            print "++++++++++++++++++++++++++"
+            #print recentevent;
+            #print "++++++++++++++++++++++++++"
             if recentevent['status'] != 'failed':
                 return;
             failedlink = getlinkfromevent(recentevent, links)
@@ -363,8 +360,8 @@ def tunnelchange(test):
             print "link from " + routerA['name']  + " to ",
             print routerZ['name'] + " failed "
 
-    if (test == 1):
-        print "++++++++++++"
+    if (test == "chicago"):
+        #print "++++++++++++"
         recentevent = {'status': 'healed', 'router_id': '10.210.10.113',
             'timestamp': 'Sun:05:43:46', 'interface_address': '10.210.16.1',
             'interface_name': 'ge-1/0/0', 'router_name': 'los angeles'}
@@ -373,7 +370,7 @@ def tunnelchange(test):
                 break
             failedlink['operationalStatus'] = 'Down'
 
-    if (test == 2):
+    if (test == "dallas"):
         recentevent = {'status': 'healed', 'router_id': '10.210.10.113',
             'timestamp': 'Sun:05:43:46', 'interface_address': '10.210.15.1',
             'interface_name': 'ge-1/0/0', 'router_name': 'los angeles'}
@@ -382,7 +379,7 @@ def tunnelchange(test):
                 break
             failedlink['operationalStatus'] = 'Down'
 
-    if (test == 3):
+    if (test == "la"):
         recentevent = {'status': 'healed', 'router_id': '10.210.10.113',
                 'timestamp': 'Sun:05:43:46', 'interface_address': '10.210.15.1',
                 'interface_name': 'ge-1/0/0', 'router_name': 'los angeles'}
@@ -398,24 +395,22 @@ def tunnelchange(test):
         lsp_list , authHeader = getlsprest();
         lsp = modifylsprest(lsp_list, ero, failedlsp['name'])
         setlsprest(lsp, authHeader);
-        newpath = getpathfromlsp(lsp)
-        print failedlsp
 
-    updatelspinfojson(LSPs, 'plannedProperties')
+    getlsp();
 
 def checklinksstatus(linkname, test):
     links = getlinks();
-    if (test == 1):
+    if (test == 'chicago'):
         for link in links:
             if link['name'] == 'L10.210.16.1_10.210.16.2':
                 link['operationalStatus'] = 'Down'
                 break
-    if (test == 2):
+    if (test == 'dallas'):
         for link in links:
             if link['name'] == 'L10.210.15.1_10.210.15.2':
                 link['operationalStatus'] = 'Down'
                 break
-    if (test == 3):
+    if (test == 'la'):
         for link in links:
             if link['name'] == 'L10.210.18.1_10.210.18.2':
                 link['operationalStatus'] = 'Down'
@@ -457,9 +452,6 @@ def getpathfromlsp(lsp, propertytype):
         newpath.append('new york')
     else:
         newpath.append('san francisco')
-    print "++++++++++++"
-    print lsp
-    print "++++++++++++"
 
     for ero in lsp[propertytype]['ero']:
         router = getrouterfromaddress(ero['address'])
@@ -469,7 +461,6 @@ def getpathfromlsp(lsp, propertytype):
 
 def updatelspinfojson(LSPs, propertytype):
     filelsps = json.loads(open('static/lspinfo.json').read())
-    print filelsps
     for lsp in LSPs:
         newpath = getpathfromlsp(lsp, propertytype)
         currentlsp = lsp['name']
@@ -481,7 +472,7 @@ def updatelspinfojson(LSPs, propertytype):
         print " to "
         print filelsps[currentlsp]['path']
 
-    with open('static/lspinfotest.json', 'w') as outfile:
+    with open('static/lspinfo.json', 'w') as outfile:
         json.dump(filelsps, outfile)
 
 
@@ -543,13 +534,12 @@ def getlsp():
     for lsp in LSPs:
         del lsp["from"]
         del lsp["to"]
-        del lsp["liveProperties"]
         #printdict(lsp)
     return LSPs, authHeader
 
 if __name__ == "__main__":
     if (len(sys.argv) == 3):
-        test = int(sys.argv[2])
+        test = sys.argv[2]
         tunnelchange(test)
     else:
         globals()[sys.argv[1]]()

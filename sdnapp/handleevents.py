@@ -18,7 +18,7 @@ class EventHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if event.src_path != "./logs":
             return;
-        tunnelchange(0)
+        tunnelchange("none")
 
 
 def handleevents():

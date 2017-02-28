@@ -16,7 +16,7 @@ def getevents():
     for item in pubsub.listen():
         print item['channel'], ":", item['data']
         if isinstance(item['data'], basestring):
-            with open('logs_test', 'a') as json_file:
+            with open('logs', 'a') as json_file:
                 json_file.write("{}\n".format(json.dumps(item['data'])))
  		print("Written to file")
 
