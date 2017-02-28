@@ -346,15 +346,20 @@ grouplspname = "GROUP_EIGHT_SF_NY_LSP3"
 def tunnelchange(test):
     print "got event changing tunnel"
     LSPs, authHeader = getlsp()
-    #nodes = getnodes();
     links = getlinks();
-    #events = recentevents();
 
+    print "++++++++++++++++++++++++++"
     if (test == 0):
-            link = getlinkfromevent(recentevent, links)
+            events = recentevents()
+            recentevent = events[1]
+            print recentevent;
+            print "++++++++++++++++++++++++++"
+            if recentevent['status'] != 'failed':
+                return;
+            failedlink = getlinkfromevent(recentevent, links)
 
-            routerA = getrouterfromaddress(link['IP_A'])
-            routerZ = getrouterfromaddress(link['IP_Z'])
+            routerA = getrouterfromaddress(failedlink['IP_A'])
+            routerZ = getrouterfromaddress(failedlink['IP_Z'])
             print "link from " + routerA['name']  + " to ",
             print routerZ['name'] + " failed "
 
@@ -393,6 +398,10 @@ def tunnelchange(test):
         lsp_list , authHeader = getlsprest();
         lsp = modifylsprest(lsp_list, ero, failedlsp['name'])
         setlsprest(lsp, authHeader);
+        newpath = getpathfromlsp(lsp)
+        print failedlsp
+
+    updatelspinfojson(LSPs, 'plannedProperties')
 
 def checklinksstatus(linkname, test):
     links = getlinks();
@@ -442,32 +451,27 @@ def getfailedlsps(LSPs, failedlink, test):
     #print failedlsps
     return failedlsps
 
-def getlsp():
-    LSPs, authHeader = getlsprest()
-    total_lsp = len(LSPs)
-    links = getlinks()
+def getpathfromlsp(lsp, propertytype):
+    newpath = []
+    if lsp['name'].find('NY_SF') != -1:
+        newpath.append('new york')
+    else:
+        newpath.append('san francisco')
+    print "++++++++++++"
+    print lsp
+    print "++++++++++++"
 
-    #filter out our lsps
-    LSPs = [lsp for lsp in LSPs if lsp['name'].find("EIGHT") != -1]
-    '''
-    for lsp in LSPs:
-        for key in lsp:
-            print key + " = " + str(lsp[key])
-        break
-    '''
+    for ero in lsp[propertytype]['ero']:
+        router = getrouterfromaddress(ero['address'])
+        #print router['name']
+        newpath.append(router['name'])
+    return newpath
+
+def updatelspinfojson(LSPs, propertytype):
     filelsps = json.loads(open('static/lspinfo.json').read())
     print filelsps
     for lsp in LSPs:
-        newpath = []
-        if lsp['name'].find('NY_SF') != -1:
-            newpath.append('new york')
-        else:
-            newpath.append('san francisco')
-        for ero in lsp['liveProperties']['ero']:
-            router = getrouterfromaddress(ero['address'])
-            #print router['name']
-            newpath.append(router['name'])
-
+        newpath = getpathfromlsp(lsp, propertytype)
         currentlsp = lsp['name']
 
         print "\n"
@@ -481,7 +485,24 @@ def getlsp():
         json.dump(filelsps, outfile)
 
 
-    requiredkeys = ["from", "to", "name", "pathType","lspIndex","tunnelId","operationalStatus","liveProperties"]
+def getlsp():
+    LSPs, authHeader = getlsprest()
+    total_lsp = len(LSPs)
+    links = getlinks()
+
+    #filter out our lsps
+    LSPs = [lsp for lsp in LSPs if lsp['name'].find("EIGHT") != -1]
+
+    updatelspinfojson(LSPs, 'liveProperties')
+
+    '''
+    for lsp in LSPs:
+        for key in lsp:
+            print key + " = " + str(lsp[key])
+        break
+    '''
+
+    requiredkeys = ["from", "to", "name", "pathType","lspIndex","tunnelId","operationalStatus","liveProperties","plannedProperties"]
     removekeys(LSPs, requiredkeys)
     for lsp in LSPs:
             lsp["From"] = lsp["from"]["address"]
