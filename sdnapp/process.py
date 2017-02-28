@@ -341,7 +341,7 @@ def computeero(lsp, link):
 
     return ero
 
-grouplspname = "GROUP_TEN_SF_NY_LSP3"
+grouplspname = "GROUP_EIGHT_SF_NY_LSP3"
 
 def tunnelchange(test):
     print "got event changing tunnel"
@@ -448,13 +448,15 @@ def getlsp():
     links = getlinks()
 
     #filter out our lsps
-    LSPs = [lsp for lsp in LSPs if lsp['name'].find("TEN") != -1]
+    LSPs = [lsp for lsp in LSPs if lsp['name'].find("EIGHT") != -1]
     '''
     for lsp in LSPs:
         for key in lsp:
             print key + " = " + str(lsp[key])
         break
     '''
+    filelsps = json.loads(open('static/lspinfo.json').read())
+    print filelsps
 
     requiredkeys = ["from", "to", "name", "pathType","lspIndex","tunnelId","operationalStatus","liveProperties"]
     removekeys(LSPs, requiredkeys)

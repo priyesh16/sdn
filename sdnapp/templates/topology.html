@@ -4,86 +4,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        table,
-        tr,
-        th {
-            border: 1px solid black;
-        }
-    </style>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
-
     <link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}">
     <!-- CSS reset -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <!-- Resource style -->
     <script src="{{ url_for('static', filename='modernizr.js') }}"></script>
     <!-- Modernizr -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-
     <title>SDN APP</title>
-</head>
-
-<head>
-    <title>Simple Map</title>
-    <meta name="viewport" content="initial-scale=1.0">
-    <meta charset="utf-8">
-    <style>
-        /* Always set the map height explicitly to define the size of the div
-			* element that contains the map. */
-
-        #map {
-            height: 50%;
-        }
-        /* Optional: Makes the sample page fill the window. */
-
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 50px 110px/*left and right*/
-            /*bot*/
-            ;
-        }
-
-        #floating-panel {
-            position: absolute;
-            top: 10px;
-            left: 25%;
-            z-index: 5;
-            background-color: #fff;
-            padding: 5px;
-            border: 1px solid #999;
-            text-align: center;
-            font-family: 'Roboto', 'sans-serif';
-            line-height: 30px;
-            padding-left: 10px;
-        }
-    </style>
+    <script>window.topology = {};</script>
 
 </head>
 
 <body onload="CreateTableFromJSON();">
-    <div id="floating-panel">
-        <input onclick="clearMarkers();" type=button value="Hide Markers">
-        <input onclick="showMarkers();" type=button value="Show All Markers">
-        <input onclick="clearroute();" type=button value="Hide route">
-        <input onclick="showMap();" type=button value="Show Map">
-    </div>
-    <div id="map"></div>
-    <script>
-        var map;
+    <header class="cd-header">
+        <h1>SDN Throwdown 2017 </h1>
+    </header>
 
-        function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: {
-                    lat: -34.397,
-                    lng: 150.644
-                },
-                zoom: 8
-            });
+    <main class="cd-main-content">
+        <div class="cd-tab-filter-wrapper">
+            <div class="cd-tab-filter">
+                <ul class="cd-filters">
+                    <li class="placeholder">
+                        <a data-type="all" href="#0">All</a>
+                        <!-- selected option on mobile -->
+                    </li>
+                    <li class="filter"><a class="selected" href="#0" data-type="all">Topology View</a></li>
+                    <li class="filter" data-filter=".color-1"><a href="#0" data-type="color-1">East VM</a></li>
+                    <li class="filter" data-filter=".color-2"><a href="#0" data-type="color-2">West VM</a></li>
+                </ul>
+                <!-- cd-filters -->
+            </div>
+            <!-- cd-tab-filter -->
+        </div>
+        <!-- cd-tab-filter-wrapper -->
+
+        <!-- Gallery class to include the main Components to be loaded -->
+        <section class="cd-gallery">
+            <ul id="map"></ul>
+
+            <!-- Modify map as well as load different forms of map using jquery -->
+            <ul>Table should come here</ul>
+            <ul id="showData"> </ul>
+            <!-- Table styling and table tab to be included-->
+            <ul> Table to end here</ul>
+
+            <input id="clickMe" type="button" value="clickme" onclick="dofunc();" />
+
+            <div id="jsondata"></div>
+            <ul id="LSPdemo"></ul>
+
+        </section>
+        <!-- cd-gallery -->
+        <div class="cd-filter">
+            <form>
+                <div class="cd-filter-block">
+                    <h4>Search</h4>
+
+                    <div class="cd-filter-content">
+                        <input type="search" placeholder="Try Topology View...">
+                    </div>
+                    <!-- cd-filter-content -->
+                </div>
+                <!-- cd-filter-block -->
+
+                <div class="cd-filter-block">
+                    <h4>Check boxes</h4>
+
+                    <ul class="cd-filter-content cd-filters list">
+                        <li>
+                            <input class="filter" data-filter=".check1" type="checkbox" id="checkbox1" onclick="Mapsfunction()">
+                            <label class="checkbox-label" for="checkbox1">Show Map</label>
+                        </li>
+                        <li>
+                            <input class="filter" data-filter=".check2" type="checkbox" id="checkbox2">
+                            <label class="checkbox-label" for="checkbox2">Show Tabular details</label>
+                        </li>
+                        <li>
+                            <input class="filter" data-filter=".check2" type="checkbox" id="checkbox2">
+                            <label class="checkbox-label" for="checkbox2">Show NodeID</label>
+                        </li>
+
+                        <li>
+                            <input class="filter" data-filter=".check3" type="checkbox" id="checkbox3">
+                            <label class="checkbox-label" for="checkbox3">Show Tunnel</label>
+                        </li>
+                    </ul>
+                    <!-- cd-filter-content -->
+                </div>
+                <!-- cd-filter-block -->
+
+                <div class="cd-filter-block">
+                    <h4>Select</h4>
+
+                    <div class="cd-filter-content">
+                        <div class="cd-select cd-filters">
+                            <select class="filter" name="selectThis" id="ChosenLSP" onchange="LSPFunction()">
+                                <option value="">Choose an LSP</option>
+                                <option value=".LSP1">LSP1</option>
+                                <option value=".LSP2">LSP2</option>
+                                <option value=".LSP3">LSP3</option>
+                                <option value=".LSP4">LSP4</option>
+                                <option value=".LSP5">LSP5</option>
+                                <option value=".LSP6">LSP6</option>
+                                <option value=".LSP7">LSP7</option>
+                                <option value=".LSP8">LSP8</option>
+                            </select>
+                        </div>
+                        <!-- cd-select -->
+                    </div>
+                    <!-- cd-filter-content -->
+                </div>
+                <!-- cd-filter-block -->
+
+                <div class="cd-filter-block">
+                    <h4>Radio buttons</h4>
+
+                    <ul class="cd-filter-content cd-filters list">
+                        <li>
+                            <input class="filter" data-filter="" type="radio" name="radioButton" id="radio1" checked>
+                            <label class="radio-label" for="radio1">Topology View</label>
+                        </li>
+
+                        <li>
+                            <input class="filter" data-filter=".radio2" type="radio" name="radioButton" id="radio2">
+                            <label class="radio-label" for="radio2">East VM</label>
+                        </li>
+
+                        <li>
+                            <input class="filter" data-filter=".radio3" type="radio" name="radioButton" id="radio3">
+                            <label class="radio-label" for="radio3">West VM</label>
+                        </li>
+                    </ul>
+                    <!-- cd-filter-content -->
+                </div>
+                <!-- cd-filter-block -->
+            </form>
+
+            <a href="#0" class="cd-close">Close</a>
+        </div>
+        <!-- cd-filter -->
+
+        <a href="#0" class="cd-filter-trigger">Filters</a>
+    </main>
+
+    <script>
+        function LSPFunction() {
+            var x = document.getElementById("ChosenLSP").value;
+            document.getElementById("LSPdemo").innerHTML = "You selected: " + x;
         }
     </script>
+
     <script>
         var map;
         var centerOfUsMap = {
@@ -94,17 +166,16 @@
         var flightPlanCoordinates1 = [];
         //var topology=blankmap;
 
-        var image1 = 'router2.jpeg';
-
+        var corerouterimage1 = 'router2.jpeg'
         var nodes = [
             ['SF', 37.7749, -122.4194],
-            ['CHI', 41.881832, -87.623177],
-            ['Dallas', 32.897480, -97.040443],
-            ['Miami', 25.761681, -80.191788],
-            ['NY', 40.730610, -73.935242],
-            ['tempa', 27.964157, -82.452606],
-            ['hou', 29.761993, -95.366302],
-            ['LA', 34.052235, -118.243683]
+            ['LA', 34.052235, -118.243683],
+            ['DA', 32.897480, -97.040443],
+            ['CH', 41.881832, -87.623177],
+            ['HO', 29.761993, -95.366302],
+            ['MI', 25.761681, -80.191788],
+            ['TA', 27.964157, -82.452606],
+            ['NY', 40.730610, -73.935242]
         ];
 
         var sfLatLng = {
@@ -531,7 +602,7 @@
                 });
 
             map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 3,
+                zoom: 4,
                 center: centerOfUsMap,
                 mapTypeControlOptions: {
                     mapTypeIds: [
@@ -541,6 +612,14 @@
                 //mapTypeId: 'terrain'
             });
 
+            function loadScript() {
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAHSVR7vphoCovcjum0NenDZPIjHlrxdbo&callback=initMap";
+                document.body.appendChild(script);
+            }
+
+            window.onload = loadScript;
             //create a list of lat to draw a line
 
             map.mapTypes.set('styled_map2', styledMapType);
@@ -549,11 +628,78 @@
             map.setMapTypeId('styled_map2');
 
             map.addListener('click', function(event) {
-                route(map);
+              //  route(map);
                 setMarkers(map);
                 vpneastroute(map);
                 vpnwestroute(map);
+                plotLine(map);
             });
+
+            function plotFailedLine(map) {
+                var symbolThree = {
+                    path: 'M -2,-2 2,2 M 2,-2 -2,2',
+                    strokeColor: '#292',
+                    strokeWeight: 4
+                };
+
+                var failedLink = new google.maps.Polyline({
+                    path: [{
+                        lat: 22.291,
+                        lng: 153.027
+                    }, {
+                        lat: 18.291,
+                        lng: 153.027
+                    }],
+                    icons: [{
+                        icon: symbolThree,
+                        offset: '50%'
+                    }],
+                    map: map
+                });
+            }
+
+            function plotLine(map) {
+                //    var topologydata = JSON.parse(topology);
+              //  alert(topology['topology'][0][nodes[0][0]][0])
+            //alert(nodes[0][0])
+
+            for(i=0;i<(nodes.length);i++)
+            {
+              var currentNode=nodes[i][0];
+              var neighbors= topology['topology'][0][currentNode];
+              for(j=0;j<neighbors.length;j++)
+              {
+                var curr=neighbors[j];
+                for(k=0;k<nodes.length;k++)
+                {
+                  if(nodes[k][0]==curr)
+                  {
+                    var Link = new google.maps.Polyline({
+                        path: [{
+                            lat:nodes[i][1],
+                            lng:nodes[i][2]
+                        }, {
+                            lat:nodes[k][1],
+                            lng:nodes[k][2]
+                        }],
+                        strokeColor: '#00F',
+                        map: map
+                    });
+                  }
+                }
+              }
+
+            }
+            if(nodes[0][0]=='SF')
+            {
+              //alert(nodes[0][1])
+            }
+            for(i=0;i<2;i++)
+            {
+
+            }
+
+            }
 
             function route(map) {
                 var flightPath = new google.maps.Polyline({
@@ -656,22 +802,22 @@
 
             function setMarkers(map) {
 
-                var image = {
-                    url: 'router2.jpeg',
+                var corerouterimage = {
+                    url: "{{url_for('static', filename='router2.jpeg')}}",
                     // This marker is 20 pixels wide by 32 pixels high.
                     scaledSize: new google.maps.Size(20, 32),
-                    // The origin for this image is (0, 0).
+                    // The origin for this corerouterimage is (0, 0).
                     origin: new google.maps.Point(0, 0),
-                    // The anchor for this image is the base of the flagpole at (0, 32).
+                    // The anchor for this corerouterimage is the base of the flagpole at (0, 32).
                     anchor: new google.maps.Point(0, 32)
                 };
                 var server = {
-                    url: 'server.png',
+                    url: "{{url_for('static',filename='server.png')}}",
                     // This marker is 20 pixels wide by 32 pixels high.
                     scaledSize: new google.maps.Size(50, 50),
-                    // The origin for this image is (0, 0).
+                    // The origin for this corerouterimage is (0, 0).
                     origin: new google.maps.Point(0, 0),
-                    // The anchor for this image is the base of the flagpole at (0, 32).
+                    // The anchor for this corerouterimage is the base of the flagpole at (0, 32).
                     anchor: new google.maps.Point(0, 32)
                 };
                 for (var i = 0; i < nodes.length; i++) {
@@ -682,12 +828,11 @@
                             lng: node[2]
                         },
                         map: map,
-                        icon: image,
+                        icon: corerouterimage,
                         //   shape: shape,
                         title: node[0],
                         //   zIndex: beach[3]
                     });
-
                     markers.push(marker);
 
                 }
@@ -744,139 +889,38 @@
         // Deletes all markers in the array by removing references to them.
     </script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key= AIzaSyAHSVR7vphoCovcjum0NenDZPIjHlrxdbo&callback=initMap" async defer></script>
-    <main class="cd-main-content">
-        <div class="cd-tab-filter-wrapper">
-            <div class="cd-tab-filter">
-                <ul class="cd-filters">
-                    <li class="placeholder">
-                        <a data-type="all" href="#0">All</a>
-                        <!-- selected option on mobile -->
-                    </li>
-                    <li class="filter"><a class="selected" href="#0" data-type="all">Topology View</a></li>
-                    <li class="filter" data-filter=".color-1"><a href="#0" data-type="color-1">East VM</a></li>
-                    <li class="filter" data-filter=".color-2"><a href="#0" data-type="color-2">West VM</a></li>
-                </ul>
-                <!-- cd-filters -->
-            </div>
-            <!-- cd-tab-filter -->
-        </div>
-        <!-- cd-tab-filter-wrapper -->
+    <script>
+        var HTML_FILE_URL = "{{ url_for('static', filename='topology.json') }}"
+        $(document).ready(function() {
+            //alert('Function ready to be loaded')
+            //$.fn.gotof = function() { // has to be defined as a function, does not need to be inside a nested document ready function
+            $.get(HTML_FILE_URL, set_topology);
+        });
 
-        <section class="cd-gallery">
-            <div id="showData">
+        //document.getElementById("clickMe").onclick= function dofunc() {
+        //$.fn.gotof();  // can call it using $.fn.gotof(), but it should really be called properly via a selector $('div').gotof();
+        //	}
 
-            </div>
+        function set_topology(tdata){
+          window.topology = tdata
+        }
+    </script>
 
-        </section>
-        <!-- cd-gallery -->
-
-        <div class="cd-filter">
-            <form>
-                <div class="cd-filter-block">
-                    <h4>Search</h4>
-
-                    <div class="cd-filter-content">
-                        <input type="search" placeholder="Try Topology View...">
-                    </div>
-                    <!-- cd-filter-content -->
-                </div>
-                <!-- cd-filter-block -->
-
-                <div class="cd-filter-block">
-                    <h4>Check boxes</h4>
-
-                    <ul class="cd-filter-content cd-filters list">
-                        <li>
-                            <input class="filter" data-filter=".check1" type="checkbox" id="checkbox1" onclick="Mapsfunction()">
-                            <label class="checkbox-label" for="checkbox1">Show Map</label>
-                        </li>
-                        <li>
-                            <input class="filter" data-filter=".check2" type="checkbox" id="checkbox2">
-                            <label class="checkbox-label" for="checkbox2">Show Tabular details</label>
-                        </li>
-                        <li>
-                            <input class="filter" data-filter=".check2" type="checkbox" id="checkbox2">
-                            <label class="checkbox-label" for="checkbox2">Show NodeID</label>
-                        </li>
-
-                        <li>
-                            <input class="filter" data-filter=".check3" type="checkbox" id="checkbox3">
-                            <label class="checkbox-label" for="checkbox3">Show Tunnel</label>
-                        </li>
-                    </ul>
-                    <!-- cd-filter-content -->
-                </div>
-                <!-- cd-filter-block -->
-
-                <div class="cd-filter-block">
-                    <h4>Select</h4>
-
-                    <div class="cd-filter-content">
-                        <div class="cd-select cd-filters">
-                            <select class="filter" name="selectThis" id="selectThis">
-                                <option value="">Choose an option</option>
-                                <option value=".option1">Topology View</option>
-                                <option value=".option2">Group8: East VM</option>
-                                <option value=".option3">Group8: West VM</option>
-                            </select>
-                        </div>
-                        <!-- cd-select -->
-                    </div>
-                    <!-- cd-filter-content -->
-                </div>
-                <!-- cd-filter-block -->
-
-                <div class="cd-filter-block">
-                    <h4>Radio buttons</h4>
-
-                    <ul class="cd-filter-content cd-filters list">
-                        <li>
-                            <input class="filter" data-filter="" type="radio" name="radioButton" id="radio1" checked>
-                            <label class="radio-label" for="radio1">Topology View</label>
-                        </li>
-
-                        <li>
-                            <input class="filter" data-filter=".radio2" type="radio" name="radioButton" id="radio2">
-                            <label class="radio-label" for="radio2">East VM</label>
-                        </li>
-
-                        <li>
-                            <input class="filter" data-filter=".radio3" type="radio" name="radioButton" id="radio3">
-                            <label class="radio-label" for="radio3">West VM</label>
-                        </li>
-                    </ul>
-                    <!-- cd-filter-content -->
-                </div>
-                <!-- cd-filter-block -->
-            </form>
-
-            <a href="#0" class="cd-close">Close</a>
-        </div>
-        <!-- cd-filter -->
-
-        <a href="#0" class="cd-filter-trigger">Filters</a>
-    </main>
-    <!-- cd-main-content -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHSVR7vphoCovcjum0NenDZPIjHlrxdbo&callback=initMap" async defer></script>
 
     <script>
-        function CreateTableFromJSON() {
-            // EXTRACT VALUE FOR HTML HEADER.
-            // ('Book ID', 'Book Name', 'Category' and 'Price')
-            var entries = {
-                {
-                    entries | tojson
-                }
-            };
+        function CreateTableFromJSON(entries) {
+            // EXTRACT VALUE FOR HTML HEADER.s
+            //var entries={{ entries|tojson }};
+            var entries1 = entries;
             var col = [];
-            for (var i = 0; i < entries.length; i++) {
-                for (var key in entries[i]) {
+            for (var i = 0; i < entries1.length; i++) {
+                for (var key in entries1[i]) {
                     if (col.indexOf(key) === -1) {
                         col.push(key);
                     }
                 }
             }
-
             // CREATE DYNAMIC TABLE.
             var table = document.createElement("table");
             // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
@@ -887,24 +931,24 @@
                 th.innerHTML = col[i];
                 tr.appendChild(th);
             }
-
             // ADD JSON DATA TO THE TABLE AS ROWS.
-            for (var i = 0; i < entries.length; i++) {
+            for (var i = 0; i < entries1.length; i++) {
 
                 tr = table.insertRow(-1);
 
                 for (var j = 0; j < col.length; j++) {
                     var tabCell = tr.insertCell(-1);
-                    tabCell.innerHTML = entries[i][col[j]];
+                    tabCell.innerHTML = entries1[i][col[j]];
                 }
             }
             // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
             var divContainer = document.getElementById("showData");
             divContainer.innerHTML = "";
             divContainer.appendChild(table);
-        }
-    </script>
 
+            window.onload = CreateTableFromJSON();
+        };
+    </script>
     <script src="{{ url_for('static', filename='jquery-2.1.1.js') }}"></script>
     <script src="{{ url_for('static', filename='jquery.mixitup.min.js') }}"></script>
     <script src="{{ url_for('static', filename='main.js') }}"></script>
