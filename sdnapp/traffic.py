@@ -104,14 +104,18 @@ def writelspjson():
 
     lspdict = {}
     for key in routes:
-        lspdict['name'] = key
-        lspdict['flow'] = "off"
-        lspdict['traffic'] = "video"
-        lspdict['path'] = routes[key]
-        jsonobj.append(lspdict)
+        #print key,
+        value = {}
+        value['flow'] = "off"
+        value['traffic'] = "video"
+        value['path'] = routes[key]
+        #print value
+        lspdict[key] = value;
+    print lspdict
+        #jsonobj.append(lspdict)
 
     with open('static/lspinfo.json', 'w') as outfile:
-        json.dump(jsonobj, outfile)
+        json.dump(lspdict, outfile)
 
 '''
     jsondict = [{'name' : 'GROUP_EIGHT_NY_SF_LSP3',
@@ -128,8 +132,8 @@ if __name__ == "__main__":
     ip = sys.argv[2];
     traffic = sys.argv[3];
 
-    print ipToLsp[ip]
-    print traffic
+    #print ipToLsp[ip]
+    #print traffic
 
     if (sys.argv[1])=="voip" :
             VOIP(sys.argv[2],address(sys.argv[3]));

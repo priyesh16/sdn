@@ -457,6 +457,29 @@ def getlsp():
     '''
     filelsps = json.loads(open('static/lspinfo.json').read())
     print filelsps
+    for lsp in LSPs:
+        newpath = []
+        if lsp['name'].find('NY_SF') != -1:
+            newpath.append('new york')
+        else:
+            newpath.append('san francisco')
+        for ero in lsp['liveProperties']['ero']:
+            router = getrouterfromaddress(ero['address'])
+            #print router['name']
+            newpath.append(router['name'])
+
+        currentlsp = lsp['name']
+
+        print "\n"
+        print "updating " + currentlsp + " path from "
+        print filelsps[currentlsp]['path'],
+        filelsps[currentlsp]['path'] = newpath
+        print " to "
+        print filelsps[currentlsp]['path']
+
+    with open('static/lspinfotest.json', 'w') as outfile:
+        json.dump(filelsps, outfile)
+
 
     requiredkeys = ["from", "to", "name", "pathType","lspIndex","tunnelId","operationalStatus","liveProperties"]
     removekeys(LSPs, requiredkeys)
